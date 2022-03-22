@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 from dateutil.parser import *
+import logging
 import requests
 import time
 
@@ -47,7 +48,7 @@ class Givenergy:
         rsp.close()
         return data
       except ConnectionAbortedError as e:
-        print(f"failed to GET {url}: {e}")
+        logging.warning(f"failed to GET {url}: {e}")
         time.sleep(1)
 
 

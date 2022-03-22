@@ -3,8 +3,11 @@ from influxdb_client import InfluxDBClient, Point, WritePrecision
 from influxdb_client.client.write_api import SYNCHRONOUS
 from givenergy import Givenergy, Snapshot
 import argparse
+import logging
 import os
 import time
+
+logging.basicConfig(level=logging.INFO)
 
 
 class Updater:
@@ -39,7 +42,7 @@ class Updater:
     try:
       snapshot = self._givenergy.get_latest_system_data()
       write_api.write(
-        bucket='solar',
+        bucket=self._bucket,
         record=snapshot,
         record_measurement_name='snapshot',
         record_tag_keys=['inverter'],
@@ -54,14 +57,14 @@ class Updater:
           'inverter_temperature_c'
         ]
       )
-      print(f'{snapshot.timestamp} '
+      logging.info(f'{snapshot.timestamp} '
         f'solar {snapshot.solar_power_watts} '
         f'grid {snapshot.grid_power_watts} '
         f'battery {snapshot.battery_power_watts} '
         f'consumption {snapshot.consumption_watts} '
     )
     except Exception as e:
-      print(f'update failed: {e}')
+      logging.warning(f'update failed: {e}')
       
 
 if __name__ == "__main__":
@@ -80,5 +83,5 @@ if __name__ == "__main__":
 
   time.sleep(10)
 
-  print(f"updating {args.influx} with period {args.period}")
+  logging.info(f"updating {args.influx} with period {args.period}")
   Updater(args).run()
