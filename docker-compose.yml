@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  influxdb:
+    image: influxdb:latest
+    hostname: influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb-volume:/var/lib/influxdb
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: influx
+      DOCKER_INFLUXDB_INIT_PASSWORD: solardata
+      DOCKER_INFLUXDB_INIT_ORG: Home
+      DOCKER_INFLUXDB_INIT_BUCKET: solar
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: super-secret-influxdb-token
+
+  updater:
+    build:
+      context: ./
+    environment:
+      INFLUX_URL: http://influxdb:8086
+      INFLUX_TOKEN: super-secret-influxdb-token
+      GIVENERGY_API_TOKEN: ${GIVENERGY_API_TOKEN}
+
+volumes:
+  influxdb-volume:
