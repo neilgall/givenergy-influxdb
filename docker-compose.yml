@@ -4,6 +4,7 @@ services:
   influxdb:
     image: influxdb:latest
     hostname: influxdb
+    restart: always
     ports:
       - "8086:8086"
     volumes:
@@ -19,6 +20,7 @@ services:
   updater:
     build:
       context: ./
+    restart: always
     environment:
       INFLUX_URL: http://influxdb:8086
       INFLUX_TOKEN: super-secret-influxdb-token
