@@ -65,11 +65,16 @@ class Givenergy:
     """
     Fetch latest system data snapshot
     """
+    def fix_timestamp(t):
+      """API returns localtime with UTC 'Z' prefix, so is broken during BST"""
+      if t.endswith('Z'): t = t[:-1]
+      return parse(t).astimezone().isoformat()
+
     url = f'{self._base_url}/inverter/{self._inverter}/system-data/latest'
     data = self._get(url)['data']
     return Snapshot(
       inverter=self._inverter,
-      timestamp=parse(data['time']).isoformat(),
+      timestamp=fix_timestamp(data['time']),
       battery_percent=int(data['battery']['percent']),
       solar_power_watts=float(data['solar']['power']),
       grid_power_watts=float(data['grid']['power']),
