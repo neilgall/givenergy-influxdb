@@ -73,13 +73,16 @@ class Givenergy:
     url = f'{self._base_url}/inverter/{self._inverter}/system-data/latest'
     data = self._get(url)['data']
     return Snapshot(
+      # normalise to net zero:
+      # - grid power, battery discharge and solar power are positive
+      # - consumption and battery charge are negative
       inverter=self._inverter,
       timestamp=fix_timestamp(data['time']),
       battery_percent=int(data['battery']['percent']),
       solar_power_watts=float(data['solar']['power']),
-      grid_power_watts=float(data['grid']['power']),
+      grid_power_watts=float(data['grid']['power']) * -1,
       battery_power_watts=float(data['battery']['power']),
-      consumption_watts=float(data['consumption']),
+      consumption_watts=float(data['consumption']) * -1,
       battery_temperature_c=float(data['battery']['temperature']),
       inverter_temperature_c=float(data['inverter']['temperature'])
     )
