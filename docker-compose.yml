@@ -9,6 +9,8 @@ services:
       - "8086:8086"
     volumes:
       - influxdb-volume:/var/lib/influxdb
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     environment:
       DOCKER_INFLUXDB_INIT_MODE: setup
       DOCKER_INFLUXDB_INIT_USERNAME: influx
@@ -21,6 +23,9 @@ services:
     build:
       context: ./
     restart: always
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     environment:
       INFLUX_URL: http://influxdb:8086
       INFLUX_TOKEN: super-secret-influxdb-token
